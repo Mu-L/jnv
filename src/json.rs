@@ -115,7 +115,7 @@ impl Visualizer for Json {
                 let mut guide = None;
                 if ret.iter().all(|val| *val == Value::Null) {
                     guide = Some(text::State {
-                        text: Text::from(format!("jq returned 'null', which may indicate a typo or incorrect filter: `{}`", input)),
+                        text: Text::from(format!("jq returned 'null', which may indicate a typo or incorrect filter: `{input}`")),
                         style: ContentStyle {
                             foreground_color: Some(Color::Yellow),
                             attributes: Attributes::from(Attribute::Bold),
@@ -132,7 +132,7 @@ impl Visualizer for Json {
             Err(e) => (
                 Some(
                     text::State {
-                        text: Text::from(format!("jq failed: `{}`", e)),
+                        text: Text::from(format!("jq failed: `{e}`")),
                         style: ContentStyle {
                             foreground_color: Some(Color::Red),
                             attributes: Attributes::from(Attribute::Bold),
@@ -172,12 +172,11 @@ fn run_jaq(
 
     for input in json_stream {
         let inputs = RcIter::new(core::iter::empty());
-        let mut out = filter.run((Ctx::new([], &inputs), Val::from(input.clone())));
-
-        while let Some(item) = out.next() {
+        let out = filter.run((Ctx::new([], &inputs), Val::from(input.clone())));
+        for item in out {
             match item {
                 Ok(val) => ret.push(val.into()),
-                Err(err) => return Err(anyhow::anyhow!("jq filter execution failed: {}", err)),
+                Err(err) => return Err(anyhow::anyhow!("jq filter execution failed: {err}")),
             }
         }
     }

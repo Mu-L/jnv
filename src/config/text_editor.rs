@@ -26,8 +26,7 @@ pub mod text_editor_mode_serde {
             "Overwrite" => Ok(Mode::Overwrite),
             // Add other variants if they exist
             _ => Err(serde::de::Error::custom(format!(
-                "Unknown Mode variant: {}",
-                mode_str
+                "Unknown Mode variant: {mode_str}",
             ))),
         }
     }

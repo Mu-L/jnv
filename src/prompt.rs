@@ -69,7 +69,7 @@ fn copy_to_clipboard(content: &str) -> text::State {
                 ..Default::default()
             },
             Err(e) => text::State {
-                text: Text::from(format!("Failed to copy to clipboard: {}", e)),
+                text: Text::from(format!("Failed to copy to clipboard: {e}")),
                 style: ContentStyle {
                     foreground_color: Some(Color::Red),
                     ..Default::default()
@@ -81,7 +81,7 @@ fn copy_to_clipboard(content: &str) -> text::State {
         // suppress the errors (but still show them) not to break the prompt
         // https://github.com/1Password/arboard/issues/153
         Err(e) => text::State {
-            text: Text::from(format!("Failed to setup clipboard: {}", e)),
+            text: Text::from(format!("Failed to setup clipboard: {e}")),
             style: ContentStyle {
                 foreground_color: Some(Color::Red),
                 ..Default::default()
