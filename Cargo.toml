@@ -33,4 +33,5 @@ jaq-std = "1.2.1"
 # The profile that 'cargo dist' will build with
 [profile.dist]
 inherits = "release"
-lto = "thin"
+codegen-units = 1
+lto = true
