@@ -1,4 +1,8 @@
-use jaq_interpret::{Ctx, FilterT, ParseCtx, RcIter, Val};
+use jaq_core::{
+    load::{Arena, File, Loader},
+    Compiler, Ctx, RcIter,
+};
+use jaq_json::Val;
 
 use promkit_widgets::{
     core::{
@@ -148,29 +152,33 @@ fn run_jaq(
     query: &str,
     json_stream: &'static [serde_json::Value],
 ) -> anyhow::Result<Vec<serde_json::Value>> {
+    let arena = Arena::default();
+    let loader = Loader::new(jaq_std::defs().chain(jaq_json::defs()));
+    let modules = loader
+        .load(
+            &arena,
+            File {
+                code: query,
+                path: (),
+            },
+        )
+        .map_err(|errs| anyhow::anyhow!("jq filter parsing failed: {errs:?}"))?;
+    let filter = Compiler::default()
+        .with_funs(jaq_std::funs().chain(jaq_json::funs()))
+        .compile(modules)
+        .map_err(|errs| anyhow::anyhow!("jq filter compilation failed: {errs:?}"))?;
+
     let mut ret = Vec::<serde_json::Value>::new();
 
     for input in json_stream {
-        let mut ctx = ParseCtx::new(Vec::new());
-        ctx.insert_natives(jaq_core::core());
-        ctx.insert_defs(jaq_std::std());
-
-        let (f, errs) = jaq_parse::parse(query, jaq_parse::main());
-        if !errs.is_empty() {
-            let error_message = errs
-                .iter()
-                .map(|e| e.to_string())
-                .collect::<Vec<_>>()
-                .join(", ");
-            return Err(anyhow::anyhow!(error_message));
-        }
-
-        let f = ctx.compile(f.unwrap());
         let inputs = RcIter::new(core::iter::empty());
-        let mut out = f.run((Ctx::new([], &inputs), Val::from(input.clone())));
+        let mut out = filter.run((Ctx::new([], &inputs), Val::from(input.clone())));
 
-        while let Some(Ok(val)) = out.next() {
-            ret.push(val.into());
+        while let Some(item) = out.next() {
+            match item {
+                Ok(val) => ret.push(val.into()),
+                Err(err) => return Err(anyhow::anyhow!("jq filter execution failed: {}", err)),
+            }
         }
     }
 
