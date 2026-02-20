@@ -111,8 +111,7 @@ fn ensure_file_exists(path: &PathBuf) -> anyhow::Result<()> {
     }
 
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)
-            .map_err(|e| anyhow!("Failed to create directory: {}", e))?;
+        std::fs::create_dir_all(parent).map_err(|e| anyhow!("Failed to create directory: {e}"))?;
     }
 
     std::fs::File::create(path)?.write_all(DEFAULT_CONFIG.as_bytes())?;
@@ -154,9 +153,9 @@ async fn main() -> anyhow::Result<()> {
         // Note that the configuration file absolutely exists.
         let content = std::fs::read_to_string(&config_file)
             // TODO: output the message as the initial guide pane.
-            .map_err(|e| anyhow!("Failed to read configuration file: {}", e))?;
+            .map_err(|e| anyhow!("Failed to read configuration file: {e}"))?;
         config = Config::load_from(&content)
-            .map_err(|e| anyhow!("Failed to deserialize configuration file: {}", e))?;
+            .map_err(|e| anyhow!("Failed to deserialize configuration file: {e}"))?;
     }
 
     let listbox_state = listbox::State {

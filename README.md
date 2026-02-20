@@ -1,7 +1,7 @@
-<picture>
+<p align="center">
   <source media="(prefers-color-scheme: dark)" srcset="assets/jnv-dark.svg">
   <img alt="Text describing the image" src="assets/jnv-light.svg" width="50%" height="50%">
-</picture>
+</p>
 
 [![ci](https://github.com/ynqa/jnv/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ynqa/jnv/actions/workflows/ci.yml)
 

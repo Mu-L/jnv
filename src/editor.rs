@@ -133,7 +133,7 @@ pub async fn edit<'a>(event: &'a Event, editor: &'a mut Editor) -> anyhow::Resul
                     }
                     None => {
                         editor.guide.text =
-                            Text::from(format!("No suggestion found for '{}'", prefix));
+                            Text::from(format!("No suggestion found for '{prefix}'"));
                         editor.guide.style = ContentStyle {
                             foreground_color: Some(Color::Yellow),
                             ..Default::default()
@@ -141,7 +141,7 @@ pub async fn edit<'a>(event: &'a Event, editor: &'a mut Editor) -> anyhow::Resul
                     }
                 },
                 Err(e) => {
-                    editor.guide.text = Text::from(format!("Failed to lookup suggestions: {}", e));
+                    editor.guide.text = Text::from(format!("Failed to lookup suggestions: {e}"));
                     editor.guide.style = ContentStyle {
                         foreground_color: Some(Color::Yellow),
                         ..Default::default()
