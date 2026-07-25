@@ -426,7 +426,3 @@ spin_duration = "300ms"
 ```
 
 </details>
-
-## Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/ynqa/jnv.svg?variant=adaptive)](https://starchart.cc/ynqa/jnv)
